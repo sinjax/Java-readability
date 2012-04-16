@@ -47,59 +47,70 @@ public final class ReadabilityDriver {
     //private constructor
     private ReadabilityDriver() { }
     
-    public static void main(String[] args) throws IOException {
-        
-        //input directory file
-        File inputDir = new File(INPUT_PATH);
-        
-        //create the FilePageReader for Readability
-        FilePageReader reader = new FilePageReader();
-        reader.setBaseDirectory(inputDir);
-        
-        //instantiate Readability and set reader
-        Readability readability = new Readability();
-        readability.setPageReader(reader);
-        readability.setReadAllPages(false);
-        reader.setCharsetDetector(new TikaCharsetDetector());
-        
-        //instantiate a file array
-        File[] htmlFiles;
-        
-        //get all html files in directory
-        if (inputDir.exists()) {
-            htmlFiles = inputDir.listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.matches(".*\\.html$");
-                }
-            });
-        } else {
-            htmlFiles = new File[0];
-        }
-        
-        //iterate over the files and run Readability on them
-        for (File page : htmlFiles) {
-            
-            //get the page path
-            String path = page.getPath();
-            
-            //process the page
-            try {
-                LOG.info("processing page: " + path);
-                readability.processDocument(path);
-            } catch (PageReadException e) {
-                LOG.error("PageReadError while processing: " + path);
-                e.printStackTrace();
-                continue;
-            }
-            
-            //write the output, forcing a sentence break between title and body with \u2029.
-            String title = readability.getTitle().trim() + "\u2029";
-            String content = readability.getArticleText();
-            String returnText = OUTPUT_PATH + page.getName().replaceAll("html$", "txt");
-            FileOutputStream fos = new FileOutputStream(returnText);
-            fos.write((title + System.getProperty("line.separator") + content).getBytes("UTF8"));
-            fos.flush();
-            fos.close();
-        }
+    public static void main(String[] args) throws IOException, PageReadException {
+    	Readability readability = new Readability();
+    	HttpPageReader reader = new HttpPageReader();
+    	readability.setPageReader(reader);
+    	reader.setCharsetDetector(new TikaCharsetDetector());
+    	readability.setReadAllPages(false);
+    	readability.processDocument(args[0]);
+    	String utfTitle = new String(readability.getTitle().getBytes(), "UTF-8");
+    	String utfArticle = new String(readability.getArticleText().getBytes(), "UTF-8");
+    	System.out.println(utfTitle);
+    	System.out.println();
+    	System.out.println(utfArticle);
+    	
+//        //input directory file
+//        File inputDir = new File(INPUT_PATH);
+//        
+//        //create the FilePageReader for Readability
+//        FilePageReader reader = new FilePageReader();
+//        reader.setBaseDirectory(inputDir);
+//        
+//        //instantiate Readability and set reader
+//        Readability readability = new Readability();
+//        readability.setPageReader(reader);
+//        readability.setReadAllPages(false);
+//        reader.setCharsetDetector(new TikaCharsetDetector());
+//        
+//        //instantiate a file array
+//        File[] htmlFiles;
+//        
+//        //get all html files in directory
+//        if (inputDir.exists()) {
+//            htmlFiles = inputDir.listFiles(new FilenameFilter() {
+//                public boolean accept(File dir, String name) {
+//                    return name.matches(".*\\.html$");
+//                }
+//            });
+//        } else {
+//            htmlFiles = new File[0];
+//        }
+//        
+//        //iterate over the files and run Readability on them
+//        for (File page : htmlFiles) {
+//            
+//            //get the page path
+//            String path = page.getPath();
+//            
+//            //process the page
+//            try {
+//                LOG.info("processing page: " + path);
+//                readability.processDocument(path);
+//            } catch (PageReadException e) {
+//                LOG.error("PageReadError while processing: " + path);
+//                e.printStackTrace();
+//                continue;
+//            }
+//            
+//            //write the output, forcing a sentence break between title and body with \u2029.
+//            String title = readability.getTitle().trim() + "\u2029";
+//            String content = readability.getArticleText();
+//            String returnText = OUTPUT_PATH + page.getName().replaceAll("html$", "txt");
+//            FileOutputStream fos = new FileOutputStream(returnText);
+//            fos.write((title + System.getProperty("line.separator") + content).getBytes("UTF8"));
+//            fos.flush();
+//            fos.close();
+//        }
     }
 }

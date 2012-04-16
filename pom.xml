@@ -35,6 +35,22 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.2.1</version>
+					<configuration>
+						<finalName>javareadability</finalName>
+						<appendAssemblyId>false</appendAssemblyId>
+						<descriptorRefs>
+							<descriptorRef>jar-with-dependencies</descriptorRef>
+						</descriptorRefs>
+						<archive>
+							<manifest>
+								<mainClass>com.basistech.readability.ReadabilityDriver</mainClass>
+							</manifest>
+						</archive>
+					</configuration>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
 					<version>1.1</version>
@@ -102,11 +118,9 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>nekohtml</groupId>
+			<groupId>net.sourceforge.nekohtml</groupId>
 			<artifactId>nekohtml</artifactId>
 			<version>1.9.13</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 		 <dependency>
             <groupId>org.apache.httpcomponents</groupId>
