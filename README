@@ -1,1 +1,11 @@
 Home for java readability.
+
+This branch adds a 
+
+	mvn assembly:assembly
+
+which lets you run:
+	
+	java javareadability.jar <someurl>
+
+cheers
